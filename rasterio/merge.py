@@ -1,16 +1,17 @@
 """Copy valid pixels from input files to an output file."""
 
-from contextlib import ExitStack, contextmanager
-import logging
-import os
-import math
 import cmath
-import warnings
+import logging
+import math
 import numbers
+import os
+import warnings
+from contextlib import ExitStack, contextmanager
 
 import numpy as np
 
 import rasterio
+from rasterio import windows
 from rasterio.enums import Resampling
 from rasterio.errors import (
     MergeError,
@@ -19,7 +20,6 @@ from rasterio.errors import (
     WindowError,
 )
 from rasterio.io import DatasetWriter
-from rasterio import windows
 from rasterio.transform import Affine
 from rasterio.windows import subdivide
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 def copy_first(merged_data, new_data, merged_mask, new_mask, **kwargs):
     """Returns the first available pixel."""
-    mask = np.empty_like(merged_mask, dtype="bool")
+    mask = np.empty_like(merged_mask, dtype=bool)
     np.logical_not(new_mask, out=mask)
     np.logical_and(merged_mask, mask, out=mask)
     np.copyto(merged_data, new_data, where=mask, casting="unsafe")
@@ -36,14 +36,14 @@ def copy_first(merged_data, new_data, merged_mask, new_mask, **kwargs):
 
 def copy_last(merged_data, new_data, merged_mask, new_mask, **kwargs):
     """Returns the last available pixel."""
-    mask = np.empty_like(merged_mask, dtype="bool")
+    mask = np.empty_like(merged_mask, dtype=bool)
     np.logical_not(new_mask, out=mask)
     np.copyto(merged_data, new_data, where=mask, casting="unsafe")
 
 
 def copy_min(merged_data, new_data, merged_mask, new_mask, **kwargs):
     """Returns the minimum value pixel."""
-    mask = np.empty_like(merged_mask, dtype="bool")
+    mask = np.empty_like(merged_mask, dtype=bool)
     np.logical_or(merged_mask, new_mask, out=mask)
     np.logical_not(mask, out=mask)
     np.minimum(merged_data, new_data, out=merged_data, where=mask, casting="unsafe")
@@ -54,7 +54,7 @@ def copy_min(merged_data, new_data, merged_mask, new_mask, **kwargs):
 
 def copy_max(merged_data, new_data, merged_mask, new_mask, **kwargs):
     """Returns the maximum value pixel."""
-    mask = np.empty_like(merged_mask, dtype="bool")
+    mask = np.empty_like(merged_mask, dtype=bool)
     np.logical_or(merged_mask, new_mask, out=mask)
     np.logical_not(mask, out=mask)
     np.maximum(merged_data, new_data, out=merged_data, where=mask, casting="unsafe")
@@ -65,7 +65,7 @@ def copy_max(merged_data, new_data, merged_mask, new_mask, **kwargs):
 
 def copy_sum(merged_data, new_data, merged_mask, new_mask, **kwargs):
     """Returns the sum of all pixel values."""
-    mask = np.empty_like(merged_mask, dtype="bool")
+    mask = np.empty_like(merged_mask, dtype=bool)
     np.logical_or(merged_mask, new_mask, out=mask)
     np.logical_not(mask, out=mask)
     np.add(merged_data, new_data, out=merged_data, where=mask, casting="unsafe")
@@ -76,7 +76,7 @@ def copy_sum(merged_data, new_data, merged_mask, new_mask, **kwargs):
 
 def copy_count(merged_data, new_data, merged_mask, new_mask, **kwargs):
     """Returns the count of valid pixels."""
-    mask = np.empty_like(merged_mask, dtype="bool")
+    mask = np.empty_like(merged_mask, dtype=bool)
     np.logical_or(merged_mask, new_mask, out=mask)
     np.logical_not(mask, out=mask)
     np.add(merged_data, mask, out=merged_data, where=mask, casting="unsafe")
@@ -169,6 +169,8 @@ def merge(
             * last: paint valid new on top of existing
             * min: pixel-wise min of existing and new
             * max: pixel-wise max of existing and new
+            * sum: pixel-wise sum of existing and new
+            * count: pixel-wise count of valid pixels
 
         or custom callable with signature:
             merged_data : array_like
@@ -288,9 +290,11 @@ def merge(
                         best_res = min(
                             best_res,
                             src.res,
-                            key=lambda x: x
-                            if isinstance(x, numbers.Number)
-                            else math.sqrt(x[0] ** 2 + x[1] ** 2),
+                            key=lambda x: (
+                                x
+                                if isinstance(x, numbers.Number)
+                                else math.sqrt(x[0] ** 2 + x[1] ** 2)
+                            ),
                         )
 
                     # The merge tool requires non-rotated rasters with origins at their
@@ -454,7 +458,6 @@ def merge(
 
             for idx, dataset in enumerate(sources):
                 with dataset_opener(dataset) as src:
-
                     # Intersect source bounds and tile bounds
                     if first_crs != src.crs:
                         raise RasterioError(f"CRS mismatch with source: {dataset}")
@@ -512,4 +515,3 @@ def merge(
         else:
             if first_colormap:
                 dst.write_colormap(1, first_colormap)
-            dst.close()

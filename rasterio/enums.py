@@ -2,10 +2,11 @@
 
 from enum import Enum, IntEnum
 
+
 class TransformDirection(IntEnum):
     """Coordinate transform direction
-    
-    Forward transform direction defined as image pixel (row, col) to 
+
+    Forward transform direction defined as image pixel (row, col) to
     geographic/projected (x, y) coordinates. Reverse transform direction defined as
     geographic/projected (x, y) to image pixel (row, col) coordinates.
 
@@ -15,16 +16,20 @@ class TransformDirection(IntEnum):
     typically the opposite of what is previously described. For consistency
     all coordinate transforms methods use the same convention.
     """
+
     forward = 1
     reverse = 0
 
+
 class TransformMethod(Enum):
-    affine = 'transform'
-    gcps = 'gcps'
-    rpcs = 'rpcs'
+    affine = "transform"
+    gcps = "gcps"
+    rpcs = "rpcs"
+
 
 class ColorInterp(IntEnum):
     """Raster band color interpretation."""
+
     undefined = 0
     gray = 1
     grey = 1
@@ -69,40 +74,7 @@ class ColorInterp(IntEnum):
 
 class Resampling(IntEnum):
     """Available warp resampling algorithms.
-    
-    Attributes
-    ----------
-    nearest
-        Nearest neighbor resampling (default, fastest algorithm, worst interpolation quality).
-    bilinear
-        Bilinear resampling.
-    cubic
-        Cubic resampling.
-    cubic_spline
-        Cubic spline resampling.
-    lanczos
-        Lanczos windowed sinc resampling.
-    average
-        Average resampling, computes the weighted average of all non-NODATA contributing pixels.
-    mode
-        Mode resampling, selects the value which appears most often of all the sampled points.
-    gauss
-        Gaussian resampling, Note: not available to the functions in rio.warp.
-    max
-        Maximum resampling, selects the maximum value from all non-NODATA contributing pixels. (GDAL >= 2.0)
-    min
-        Minimum resampling, selects the minimum value from all non-NODATA contributing pixels. (GDAL >= 2.0)
-    med
-        Median resampling, selects the median value of all non-NODATA contributing pixels. (GDAL >= 2.0)
-    q1
-        Q1, first quartile resampling, selects the first quartile value of all non-NODATA contributing pixels. (GDAL >= 2.0)
-    q3
-        Q3, third quartile resampling, selects the third quartile value of all non-NODATA contributing pixels. (GDAL >= 2.0)
-    sum
-        Sum, compute the weighted sum of all non-NODATA contributing pixels. (GDAL >= 3.1)
-    rms
-        RMS, root mean square / quadratic mean of all non-NODATA contributing pixels. (GDAL >= 3.3)
-    
+
     Notes
     ----------
     The first 8, 'nearest', 'bilinear', 'cubic', 'cubic_spline',
@@ -120,21 +92,37 @@ class Resampling(IntEnum):
 
     Note: 'gauss' is not available to the functions in rio.warp.
     """
+
     nearest = 0
+    """Nearest neighbor resampling (default, fastest algorithm, worst interpolation quality)."""
     bilinear = 1
+    """Bilinear resampling."""
     cubic = 2
+    """Cubic resampling."""
     cubic_spline = 3
+    """Cubic spline resampling."""
     lanczos = 4
+    """Lanczos windowed sinc resampling."""
     average = 5
+    """Average resampling, computes the weighted average of all non-NODATA contributing pixels."""
     mode = 6
+    """Mode resampling, selects the value which appears most often of all the sampled points."""
     gauss = 7
+    """Gaussian resampling, Note: not available to the functions in rio.warp."""
     max = 8
+    """Maximum resampling, selects the maximum value from all non-NODATA contributing pixels. (GDAL >= 2.0)"""
     min = 9
+    """Minimum resampling, selects the minimum value from all non-NODATA contributing pixels. (GDAL >= 2.0)"""
     med = 10
+    """Median resampling, selects the median value of all non-NODATA contributing pixels. (GDAL >= 2.0)"""
     q1 = 11
+    """Q1, first quartile resampling, selects the first quartile value of all non-NODATA contributing pixels. (GDAL >= 2.0)"""
     q3 = 12
+    """Q3, third quartile resampling, selects the third quartile value of all non-NODATA contributing pixels. (GDAL >= 2.0)"""
     sum = 13
+    """Sum, compute the weighted sum of all non-NODATA contributing pixels. (GDAL >= 3.1)"""
     rms = 14
+    """RMS, root mean square / quadratic mean of all non-NODATA contributing pixels. (GDAL >= 3.3)"""
 
 
 class OverviewResampling(IntEnum):
@@ -150,6 +138,7 @@ class OverviewResampling(IntEnum):
     'rms' is only supported in GDAL >= 3.3.
 
     """
+
     nearest = 0
     bilinear = 1
     cubic = 2
@@ -167,27 +156,30 @@ class Compression(Enum):
     Note that compression options for EXR, MRF, etc are not included
     in this enum.
     """
-    jpeg = 'JPEG'
-    lzw = 'LZW'
-    packbits = 'PACKBITS'
-    deflate = 'DEFLATE'
-    ccittrle = 'CCITTRLE'
-    ccittfax3 = 'CCITTFAX3'
-    ccittfax4 = 'CCITTFAX4'
-    lzma = 'LZMA'
-    none = 'NONE'
-    zstd = 'ZSTD'
-    lerc = 'LERC'
-    lerc_deflate = 'LERC_DEFLATE'
-    lerc_zstd = 'LERC_ZSTD'
-    webp = 'WEBP'
-    jpeg2000 = 'JPEG2000'
+
+    jpeg = "JPEG"
+    lzw = "LZW"
+    packbits = "PACKBITS"
+    deflate = "DEFLATE"
+    ccittrle = "CCITTRLE"
+    ccittfax3 = "CCITTFAX3"
+    ccittfax4 = "CCITTFAX4"
+    lzma = "LZMA"
+    none = "NONE"
+    zstd = "ZSTD"
+    lerc = "LERC"
+    lerc_deflate = "LERC_DEFLATE"
+    lerc_zstd = "LERC_ZSTD"
+    webp = "WEBP"
+    jpeg2000 = "JPEG2000"
 
 
 class Interleaving(Enum):
-    pixel = 'PIXEL'
-    line = 'LINE'
-    band = 'BAND'
+    pixel = "PIXEL"
+    line = "LINE"
+    band = "BAND"
+    #: tile requires GDAL 3.11+
+    tile = "TILE"
 
 
 class MaskFlags(IntEnum):
@@ -198,20 +190,21 @@ class MaskFlags(IntEnum):
 
 
 class PhotometricInterp(Enum):
-    black = 'MINISBLACK'
-    white = 'MINISWHITE'
-    rgb = 'RGB'
-    cmyk = 'CMYK'
-    ycbcr = 'YCbCr'
-    cielab = 'CIELAB'
-    icclab = 'ICCLAB'
-    itulab = 'ITULAB'
+    black = "MINISBLACK"
+    white = "MINISWHITE"
+    rgb = "RGB"
+    cmyk = "CMYK"
+    ycbcr = "YCbCr"
+    cielab = "CIELAB"
+    icclab = "ICCLAB"
+    itulab = "ITULAB"
 
 
 class MergeAlg(Enum):
     """Available rasterization algorithms"""
-    replace = 'REPLACE'
-    add = 'ADD'
+
+    replace = "REPLACE"
+    add = "ADD"
 
 
 class WktVersion(Enum):
@@ -233,7 +226,6 @@ class WktVersion(Enum):
     WKT1 = "WKT1"
     #: WKT Version 1 ESRI Style
     WKT1_ESRI = "WKT1_ESRI"
-
 
     @classmethod
     def _missing_(cls, value):
